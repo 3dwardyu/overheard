@@ -10,6 +10,16 @@ var users = require('./routes/users');
 
 var app = express();
 
+var mongoose = require('mongoose');
+var passport = require('passport');
+var session = require('express-session');
+var flash = require('connect-flash');
+
+var configDB = require('./config/database.js');
+
+mongoose.connect('localhost:27017/overheard');
+// require('./config/passport')(passport);
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -18,12 +28,20 @@ app.set('view engine', 'ejs');
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// config for passport
+app.use(session({secret: 'randomcharactersusedasplaceholder'}));
+app.use(passport.initialize());
+app.use(passport.sessions());
+app.use(flash());
+
 app.use('/', index);
 app.use('/users', users);
+require('./app/routers.js')(app, passport);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
