@@ -10,19 +10,20 @@ var users = require('./routes/users');
 
 var app = express();
 
+// setup mongoose 
 var mongoose = require('mongoose');
+mongoose.connect('localhost:27017/overheard');
+
 var passport = require('passport');
 var session = require('express-session');
 var flash = require('connect-flash');
-
-var configDB = require('./config/database.js');
-
-mongoose.connect('localhost:27017/overheard');
-// require('./config/passport')(passport);
+var configDB = require('./database.js');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
+// require('./config/passport')(passport);
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -33,14 +34,14 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // config for passport
-app.use(session({secret: 'randomcharactersusedasplaceholder'}));
+app.use(session({secret: 'randomcharactersusedasplaceholder', saveUninitialized: true, resave: true}));
 app.use(passport.initialize());
-app.use(passport.sessions());
+app.use(passport.session());
 app.use(flash());
 
 app.use('/', index);
 app.use('/users', users);
-require('./app/routers.js')(app, passport);
+// require('./routes/routes.js')(app, pasport);
 
 
 // catch 404 and forward to error handler
