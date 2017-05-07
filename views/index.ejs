@@ -1,11 +1,21 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <title>Overheard</title>
+    <link rel='stylesheet' href='/stylesheets/bootstrap.min.css' />
   </head>
   <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
+    <div class="container">
+      
+      <div class="jumbotron text-center">
+        <h1>Overheard</h1>
+      </div> <!-- jumbotron -->
+
+      <p>Login or Register with:</p>
+
+      <a href="/login" class="btn btn-default">Login</a>
+      <a href="/signup" class="btn btn-default">Signup</a>
+
+    </div> <!-- container -->
   </body>
 </html>
