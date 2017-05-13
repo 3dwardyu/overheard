@@ -1,1 +1,22 @@
-<h1>It works</h1>
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Overheard</title>
+    <link rel='stylesheet' href='/stylesheets/bootstrap.min.css' />
+  </head>
+  <body>
+    <div class="container">
+      <div class="jumbotron text-center">
+        <h1>Overheard</h1>
+
+        <a href="/" class="btn btn-default">Home</a>
+        <a href="/signout" class="btn btn-default">Signout</a>
+
+      </div> <!-- jumbotron -->
+
+      <p>id: <%= user.id %></p>
+      <p>email: <%= user.local.email %></p>
+
+    </div> <!-- container -->
+  </body>
+</html>
