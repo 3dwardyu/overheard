@@ -16,7 +16,6 @@ mongoose.connect('localhost:27017/overheard');
 var passport = require('passport');
 var session = require('express-session');
 var flash = require('connect-flash');
-var configDB = require('./database.js');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
