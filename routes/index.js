@@ -10,8 +10,13 @@ app.get('/login', function (req, res, next) {
   res.render('login.ejs', {message: req.flash('loginMessage') })
 });
 
-// Signup
+app.post('/login', passport.authenticate('local-login', {
+  sucessRedirect: '/profile',
+  failureRedirect: '/login',
+  failureFlash: true
+}));
 
+// Signup
 app.get('/signup', function (req, res, next) {
   res.render('signup.ejs', { message: req.flash('signupMessage') })
 });
