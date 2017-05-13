@@ -1,8 +1,11 @@
 // load passport local strategies
+var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 
 // loads user model
 var User = require('../models/user');
+
+module.exports = function(passport){
 
 //used to serialize the user for the session
 passport.serializeUser(function(user, done){
@@ -17,7 +20,7 @@ passport.deserializeUser(function(id, done){
 });
 
 //Local signup
-passport.use('local.signup', new LocalStrategy({
+passport.use('local-signup', new LocalStrategy({
     // overwrite username field to use email
     usernameField: 'email',
     passwordField: 'password',
@@ -43,7 +46,7 @@ function(req, email, password, done){
 
                 // set user's credentials
                 newUser.local.email = email;
-                newUser.local.password = newUser.generateHash(password);
+                newUser.local.password = newUser.encryptPassword(password);
 
                 // save the user
                 newUser.save(function(err){
@@ -55,5 +58,4 @@ function(req, email, password, done){
         });
     });
 }));
-
-module.exports = passport;
+};

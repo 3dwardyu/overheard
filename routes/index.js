@@ -1,25 +1,29 @@
-var express = require('express');
-var passport = require('passport');
-var router = express.Router();
 
+module.exports = function (app, passport){
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index');
+app.get('/', function(req, res, next) {
+  res.render('index.ejs');
 });
 
 // Login
-router.get('/login', function (req, res, next) {
+app.get('/login', function (req, res, next) {
   res.render('login.ejs', {message: req.flash('loginMessage') })
 });
 
 // Signup
 
-router.get('/signup', function (req, res, next) {
+app.get('/signup', function (req, res, next) {
   res.render('signup.ejs', { message: req.flash('signupMessage') })
 });
 
+app.post('/signup', passport.authenticate('local-signup', {
+  successRedirect: '/profile',
+  failureRedirect: '/signup',
+  failureFlash: true
+}));
+
 // Profile
-router.get('/profile', isLoggedIn, function(req, res, next){
+app.get('/profile', isLoggedIn, function(req, res, next){
   res.render('profile.ejs', {
     user : req.user
   });
@@ -27,11 +31,11 @@ router.get('/profile', isLoggedIn, function(req, res, next){
 
 
 // Logout
-router.get('/logout', function (req, res, next){
+app.get('/logout', function (req, res, next){
   req.logout();
   res.redirect('/');
 });
-
+};
 // route to make sure user is logged in
 function isLoggedIn (req, res, next) {
   //if usre is authenticated in the session, carry on
@@ -43,4 +47,3 @@ function isLoggedIn (req, res, next) {
 }
 
 
-module.exports = router;
