@@ -40,6 +40,16 @@ app.get('/logout', function (req, res, next){
   req.logout();
   res.redirect('/');
 });
+
+//Routes for Twitter
+app.get('/auth/twitter', passport.authenticate('twitter'));
+
+app.get('/auth/twitter/callback',
+  passport.authenticate('twitter',{
+    successRedirect: '/profile',
+    failureRedirect: '/'
+  }));
+
 };
 // route to make sure user is logged in
 function isLoggedIn (req, res, next) {
