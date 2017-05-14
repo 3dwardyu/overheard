@@ -42,8 +42,10 @@ app.get('/logout', function (req, res, next){
 });
 
 //Routes for Twitter
+// route for twitter authentication and login
 app.get('/auth/twitter', passport.authenticate('twitter'));
 
+//handle callback after twitter authenicated the user
 app.get('/auth/twitter/callback',
   passport.authenticate('twitter',{
     successRedirect: '/profile',
