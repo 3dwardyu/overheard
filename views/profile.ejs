@@ -11,12 +11,18 @@
 
         <a href="/" class="btn btn-default">Home</a>
         <a href="/logout" class="btn btn-default">Logout</a>
-        <a href="/auth/twitter" class="btn btn-default">Link Twitter</a>
 
       </div> <!-- jumbotron -->
 
       <p>id: <%= user.id %></p>
       <p>email: <%= user.local.email %></p>
+
+      <hr>
+
+      <p>Twitter id: <%= user.twitter.id %></p>
+      <p>Twitter username: <%= user.twitter.username %></p>
+      <p>Twitter displayname: <%= user.twitter.displayName %></p>
+
 
     </div> <!-- container -->
   </body>

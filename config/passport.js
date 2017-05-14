@@ -94,14 +94,14 @@ module.exports = function(passport){
     passport.use(new TwitterStrategy({
 
         consumerKey: configAuth.twitterAuth.consumerKey,
-        consumerSecret: configAuth.twitterAuth.consumerSecert,
-        callbackUrl: config.twitterAuth.callbackURL
+        consumerSecret: configAuth.twitterAuth.consumerSecret,
+        callbackUrl: configAuth.twitterAuth.callbackURL
     },
     function(token, tokenSecret, profile, done){
         
         process.nextTick(function(){
 
-            User.fineOne({ 'twitter.id': profile.id }, function(err, user){
+            User.findOne({ 'twitter.id': profile.id }, function(err, user){
                 // if error stop and return error
                 if(err)
                     return done(err);
@@ -119,7 +119,7 @@ module.exports = function(passport){
                     newUser.twitter.username = profile.username;
                     newUser.twitter.displayName = profile.displayName;
 
-                    // saves user into our database
+                    // saves twitter user into our database
                     newUser.save(function(err){
                         if (err)
                             throw err;
