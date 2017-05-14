@@ -2,6 +2,7 @@
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var TwitterStrategy = require('passport-twitter').Strategy;
+var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 // loads user model
 var User = require('../models/user');
@@ -90,7 +91,6 @@ module.exports = function(passport){
     }));
 
     // Twitter
-
     passport.use(new TwitterStrategy({
 
         consumerKey: configAuth.twitterAuth.consumerKey,
@@ -125,6 +125,46 @@ module.exports = function(passport){
                             throw err;
                         return
                             done(null, newUser);
+                    });
+                }
+            });
+        });
+    }));
+
+    // Google
+    passport.use(new GoogleStrategy({
+        clientID: configAuth.googleAuth.clientID,
+        clientSecret: configAuth.googleAuth.clientSecret,
+        callbackURL: configAuth.googleAuth.callbackURL,
+    },
+
+    function(token, refreshToken, profile, done){
+
+        process.nextTick(function(){
+
+            // try to find user based on their google id
+            User.findOne({ 'google.id': profile.id }, function(err, user){
+                if(err)
+                    return done(err);
+
+                if(user){
+                    // if user is found log them in
+                    return done(null, user);
+                } else {
+                    //if user isn't found create it in database
+                    var newUser = new User();
+
+                    // set user data
+                    newUser.google.id = profile.id;
+                    newUser.google.token = token;
+                    newUser.google.name = profile.displayName;
+                    newUser.google.email = profile.emails[0].value; //uses the first email
+
+                    // save the user
+                    newUser.save(function(err){
+                        if(err)
+                            throw err;
+                        return done(null, newUser);
                     });
                 }
             });
