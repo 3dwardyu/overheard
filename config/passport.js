@@ -1,9 +1,13 @@
 // load passport local strategies
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+var TwitterStrategy = require('passport-twitter').Strategy;
 
 // loads user model
 var User = require('../models/user');
+
+// loads the auth variables
+var configAuth = require('./auth');
 
 module.exports = function(passport){
 
@@ -82,6 +86,48 @@ module.exports = function(passport){
             
             //return sucessful user
             return done(null, user);
+        });
+    }));
+
+    // Twitter
+
+    passport.use(new TwitterStrategy({
+
+        consumerKey: configAuth.twitterAuth.consumerKey,
+        consumerSecret: configAuth.twitterAuth.consumerSecert,
+        callbackUrl: config.twitterAuth.callbackURL
+    },
+    function(token, tokenSecret, profile, done){
+        
+        process.nextTick(function(){
+
+            User.fineOne({ 'twitter.id': profile.id }, function(err, user){
+                // if error stop and return error
+                if(err)
+                    return done(err);
+                
+                // if user is found log them in
+                if (user) {
+                    return done(null, user);
+                } else {
+                    //if user doesn't exist create it
+                    var newUser = new User();
+
+                    //set user data
+                    newUser.twitter.id = profile.id;
+                    newUser.twitter.token = token;
+                    newUser.twitter.username = profile.username;
+                    newUser.twitter.displayName = profile.displayName;
+
+                    // saves user into our database
+                    newUser.save(function(err){
+                        if (err)
+                            throw err;
+                        return
+                            done(null, newUser);
+                    });
+                }
+            });
         });
     }));
 };
