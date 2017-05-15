@@ -3,6 +3,7 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var TwitterStrategy = require('passport-twitter').Strategy;
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+var InstagramStrategy = require('passport-instagram').Strategy;
 
 // loads user model
 var User = require('../models/user');
@@ -169,5 +170,39 @@ module.exports = function(passport){
                 }
             });
         });
+    }));
+
+    passport.use(new InstagramStrategy({
+        clientID: configAuth.instagramAuth.clientID,
+        clientSecret: configAuth.instagramAuth.clientSecret,
+        callbackURL: configAuth.instagramAuth.callbackURL
+    },
+
+    function(token, refreshToken, profile, done){
+        User.findOne({ 'instagram.id': profile.id}, function (err, user){
+            if (err)
+            return done(err);
+
+                if(user){
+                    // if user is found log them in
+                    return done(null, user);
+                } else {
+                    //if user isn't found create it in database
+                    var newUser = new User();
+
+                    // set user data
+                    newUser.instagram.id = profile.id;
+                    newUser.instagram.token = token;
+                    newUser.instagram.username = profile.userame;
+                    newUser.instagram.name = profile.full_name;
+
+                    // save the user
+                    newUser.save(function(err){
+                        if(err)
+                            throw err;
+                        return done(null, newUser);
+                    });
+                }
+        })
     }));
 };
