@@ -75,7 +75,7 @@ module.exports = function (app, passport){
       successRedirect: '/profile',
       failureRedirect: '/'
     }));
-    
+
 /////////////////////////////////////////////////////////////////////////
 // AUTHORIZE (Already logged in/ Connecting other social media accounts)
 /////////////////////////////////////////////////////////////////////////
@@ -122,6 +122,48 @@ module.exports = function (app, passport){
       successRedirect: '/profile',
       failureRedirect: '/'
     }));
+
+/////////////////////////////////////////////////////////////////////////
+// UNLINK ACCOUNTS
+/////////////////////////////////////////////////////////////////////////
+
+  // TWITTER
+  app.get('/unlink/twitter', function(req, res){
+    var user = req.user;
+    user.twitter.id = undefined;
+    user.twitter.token = undefined;
+    user.twitter.username = undefined;
+    user.twitter.displayName = undefined;
+    user.save(function(err){
+      res.redirect('/profile');
+    });
+  });
+
+  // GOOGLE
+  app.get('/unlink/google', function(req, res){
+    var user = req.user;
+    user.google.token = undefined;
+    user.google.id = undefined;
+    user.google.username = undefined;
+    user.google.displayName = undefined;
+    user.save(function(err){
+      res.redirect('/profile');
+    });
+  });
+
+  // INSTAGRAM
+  app.get('/unlink/instagram', function(req, res){
+    var user = req.user;
+    user.instagram.token = undefined;
+    user.instagram.id = undefined;
+    user.instagram.username = undefined;
+    user.instagram.displayName = undefined;
+    user.save(function(err){
+      res.redirect('/profile');
+    });
+  });
+
+
 
 };
 
