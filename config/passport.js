@@ -189,13 +189,13 @@ module.exports = function(passport){
                 } else {
                     //if user isn't found create it in database
                     var newUser = new User();
-
+                    console.log(profile);
                     // set user data
                     newUser.instagram.id = profile.id;
                     newUser.instagram.token = token;
-                    newUser.instagram.username = profile.userame;
-                    newUser.instagram.name = profile.full_name;
-
+                    newUser.instagram.username = profile.username;
+                    newUser.instagram.displayName = profile.displayName;
+console.log(profile);
                     // save the user
                     newUser.save(function(err){
                         if(err)

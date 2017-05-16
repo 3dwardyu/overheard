@@ -62,6 +62,16 @@ module.exports = function (app, passport){
       failureRedirect: '/'
     }));
 
+  //Routes for Instagram
+  // route for instagram authentication and login
+  app.get('/auth/instagram', passport.authenticate('instagram'));
+
+  // handle callback after google authenticated the user
+  app.get('/auth/instagram/callback',
+    passport.authenticate('instagram',{
+      successRedirect: '/profile',
+      failureRedirect: '/'
+    }));
 };
 // route to make sure user is logged in
 function isLoggedIn (req, res, next) {
