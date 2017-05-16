@@ -75,6 +75,53 @@ module.exports = function (app, passport){
       successRedirect: '/profile',
       failureRedirect: '/'
     }));
+    
+/////////////////////////////////////////////////////////////////////////
+// AUTHORIZE (Already logged in/ Connecting other social media accounts)
+/////////////////////////////////////////////////////////////////////////
+
+// LOCAL
+  app.get('/connect/local', function (req,res){
+    res.render('connect-local.ejs', {message: req.flash('loginMessage') });
+  });
+
+  app.post('/connect/local', passport.authenticate('local-signup', {
+    successRedirect: '/profile',
+    failureRedirect: '/',
+  }));
+
+  // TWITTER
+  //send to twitter to authenticate
+  app.get('/connect/twitter', passport.authorize('twitter'));
+
+  //handle the callback after twitter authorized the user
+  app.get('/connect/twitter/callback', 
+    passport.authorize('twitter', {
+      successRedirect: '/profile',
+      failureRedirect: '/'
+    }));
+
+  // GOOGLE
+  //send to google to authenticate
+  app.get('/connect/google', passport.authorize('google', { scope: ['profile', 'email'] }));
+
+  //handle the callback after google authorized the user
+  app.get('/connect/google/callback',
+    passport.authorize('google', {
+      successRedirect: '/profile',
+      failureRedirect: '/'
+    }));
+
+  // INSTAGRAM
+  // send to instagram to authenticate
+  app.get('/connect/instagram', passport.authenticate('instagram'));
+  
+  //handle the callback after google authorized the user
+  app.get('/connect/instagram/callback',
+    passport.authorize('instagram',{
+      successRedirect: '/profile',
+      failureRedirect: '/'
+    }));
 
 };
 
