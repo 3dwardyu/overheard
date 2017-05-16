@@ -4,8 +4,11 @@ module.exports = function (app, passport){
   app.get('/', function(req, res, next) {
     res.render('index.ejs');
   });
+//////////////////////////////////////////////////////////////////////
+//  AUTHENTICATE (First Login)
+//////////////////////////////////////////////////////////////////////
 
-  // Login
+  // LOCAL LOGIN
   app.get('/login', function (req, res, next) {
     res.render('login.ejs', {message: req.flash('loginMessage') })
   });
@@ -16,7 +19,7 @@ module.exports = function (app, passport){
     failureFlash: true
   }));
 
-  // Signup
+  // LOCAL SIGNUP
   app.get('/signup', function (req, res, next) {
     res.render('signup.ejs', { message: req.flash('signupMessage') })
   });
@@ -27,14 +30,14 @@ module.exports = function (app, passport){
     failureFlash: true
   }));
 
-  // Profile
+  // PROFILE
   app.get('/profile', isLoggedIn, function(req, res, next){
     res.render('profile.ejs', {
       user : req.user
     });
   });
 
-  // Logout
+  // LOGOUT
   app.get('/logout', function (req, res, next){
     req.logout();
     res.redirect('/');
@@ -72,7 +75,9 @@ module.exports = function (app, passport){
       successRedirect: '/profile',
       failureRedirect: '/'
     }));
+
 };
+
 // route to make sure user is logged in
 function isLoggedIn (req, res, next) {
   //if usre is authenticated in the session, carry on
