@@ -96,39 +96,58 @@ module.exports = function(passport){
 
         consumerKey: configAuth.twitterAuth.consumerKey,
         consumerSecret: configAuth.twitterAuth.consumerSecret,
-        callbackUrl: configAuth.twitterAuth.callbackURL
+        callbackUrl: configAuth.twitterAuth.callbackURL,
+        passReqToCallback: true //allows us to pass in the req from our route (lets us check if a user i s logged in or not)
     },
-    function(token, tokenSecret, profile, done){
+    function(req, token, tokenSecret, profile, done){
         
         process.nextTick(function(){
 
-            User.findOne({ 'twitter.id': profile.id }, function(err, user){
-                // if error stop and return error
-                if(err)
-                    return done(err);
-                
-                // if user is found log them in
-                if (user) {
+            if(!req.user) {
+                User.findOne({ 'twitter.id': profile.id }, function(err, user){
+                    // if error stop and return error
+                    if(err)
+                        return done(err);
+                    
+                    // if user is found log them in
+                    if (user) {
+                        return done(null, user);
+                    } else {
+                        //if user doesn't exist create it
+                        var newUser = new User();
+
+                        //set user data
+                        newUser.twitter.id = profile.id;
+                        newUser.twitter.token = token;
+                        newUser.twitter.username = profile.username;
+                        newUser.twitter.displayName = profile.displayName;
+
+                        // saves twitter user into our database
+                        newUser.save(function(err){
+                            if (err)
+                                throw err;
+                            return
+                                done(null, newUser);
+                        });
+                    }
+                });
+            } else {
+                // if user already exists and is logged in, link the accounts
+                var user = req.user; // pull the user from session
+
+                //update current user with twitter credentials
+                user.twitter.id = profile.id;
+                user.twitter.token = token;
+                user.twitter.username = profile.username;
+                user.twitter.displayName = profile.displayName;
+
+                // save the user
+                user.save(function(err){
+                    if(err)
+                        throw err;
                     return done(null, user);
-                } else {
-                    //if user doesn't exist create it
-                    var newUser = new User();
-
-                    //set user data
-                    newUser.twitter.id = profile.id;
-                    newUser.twitter.token = token;
-                    newUser.twitter.username = profile.username;
-                    newUser.twitter.displayName = profile.displayName;
-
-                    // saves twitter user into our database
-                    newUser.save(function(err){
-                        if (err)
-                            throw err;
-                        return
-                            done(null, newUser);
-                    });
-                }
-            });
+                });
+            }
         });
     }));
 
@@ -137,72 +156,113 @@ module.exports = function(passport){
         clientID: configAuth.googleAuth.clientID,
         clientSecret: configAuth.googleAuth.clientSecret,
         callbackURL: configAuth.googleAuth.callbackURL,
+        passReqToCallback: true //allows us to pass in the req from our route (lets us check if a user i s logged in or not)
     },
 
-    function(token, refreshToken, profile, done){
+    function(req, token, refreshToken, profile, done){
 
         process.nextTick(function(){
 
-            // try to find user based on their google id
-            User.findOne({ 'google.id': profile.id }, function(err, user){
-                if(err)
-                    return done(err);
+            if(!req.user) {
+                // try to find user based on their google id
+                User.findOne({ 'google.id': profile.id }, function(err, user){
+                    if(err)
+                        return done(err);
 
-                if(user){
-                    // if user is found log them in
-                    return done(null, user);
+                    if(user){
+                        // if user is found log them in
+                        return done(null, user);
+                    } else {
+                        //if user isn't found create it in database
+                        var newUser = new User();
+
+                        // set user data
+                        newUser.google.id = profile.id;
+                        newUser.google.token = token;
+                        newUser.google.name = profile.displayName;
+                        newUser.google.email = profile.emails[0].value; //uses the first email
+
+                        // save the user
+                        newUser.save(function(err){
+                            if(err)
+                                throw err;
+                            return done(null, newUser);
+                        });
+                    }
+                });
+
                 } else {
-                    //if user isn't found create it in database
-                    var newUser = new User();
+                // if user already exists and is logged in, link the accounts
+                var user = req.user; // pull the user from session
 
-                    // set user data
-                    newUser.google.id = profile.id;
-                    newUser.google.token = token;
-                    newUser.google.name = profile.displayName;
-                    newUser.google.email = profile.emails[0].value; //uses the first email
+                //update current user with google credentials
+                user.google.id = profile.id;
+                user.google.token = token;
+                user.google.username = profile.displayName;
+                user.google.displayName = profile.emails[0].value;
 
-                    // save the user
-                    newUser.save(function(err){
-                        if(err)
-                            throw err;
-                        return done(null, newUser);
-                    });
-                }
-            });
+                // save the user
+                user.save(function(err){
+                    if(err)
+                        throw err;
+                    return done(null, user);
+                });
+            }
         });
     }));
 
     passport.use(new InstagramStrategy({
         clientID: configAuth.instagramAuth.clientID,
         clientSecret: configAuth.instagramAuth.clientSecret,
-        callbackURL: configAuth.instagramAuth.callbackURL
+        callbackURL: configAuth.instagramAuth.callbackURL,
+        passReqToCallback: true //allows us to pass in the req from our route (lets us check if a user i s logged in or not)
     },
 
-    function(token, refreshToken, profile, done){
-        User.findOne({ 'instagram.id': profile.id}, function (err, user){
-            if (err)
-            return done(err);
+    function(req, token, refreshToken, profile, done){
 
-                if(user){
-                    // if user is found log them in
-                    return done(null, user);
-                } else {
-                    //if user isn't found create it in database
-                    var newUser = new User();
-                    console.log(profile);
-                    // set user data
-                    newUser.instagram.id = profile.id;
-                    newUser.instagram.token = token;
-                    newUser.instagram.username = profile.username;
-                    newUser.instagram.displayName = profile.displayName;
-console.log(profile);
-                    // save the user
-                    newUser.save(function(err){
-                        if(err)
-                            throw err;
-                        return done(null, newUser);
-                    });
-                }
-        })
+        process.nextTick(function(){
+            if(!req.user){
+                User.findOne({ 'instagram.id': profile.id}, function (err, user){
+                    if (err)
+                        return done(err);
+
+                    if(user){
+                        // if user is found log them in
+                        return done(null, user);
+                    } else {
+                        //if user isn't found create it in database
+                        var newUser = new User();
+
+                        // set user data
+                        newUser.instagram.id = profile.id;
+                        newUser.instagram.token = token;
+                        newUser.instagram.username = profile.username;
+                        newUser.instagram.displayName = profile.displayName;
+
+                        // save the user
+                        newUser.save(function(err){
+                            if(err)
+                                throw err;
+                            return done(null, newUser);
+                        });
+                    }
+            });
+        } else {
+            //if user exists and is logged in, link the accounts
+            var user = req.user // pull the user from the session
+
+            // update current users with instagram credentials
+            user.instagram.id = profile.id;
+            user.instagram.token = token;
+            user.instagram.username = profile.username;
+            user.instagram.displayName = profile.displayName;
+
+            user.save(function(err){
+                if (err)
+                    throw err;
+                return (null, user);
+            });
+            }
+        });
     }));
 };
