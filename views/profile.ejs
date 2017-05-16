@@ -13,27 +13,42 @@
         <a href="/logout" class="btn btn-default">Logout</a>
 
       </div> <!-- jumbotron -->
+      <% if (user.local.email) { %>}
+        <p>id: <%= user.id %></p>
+        <p>email: <%= user.local.email %></p>
+      <% } else { %>
+        <a href="/connect/local/" class="btn btn-default">Link Overheard Account</a>
+      <% } %>
 
-      <p>id: <%= user.id %></p>
-      <p>email: <%= user.local.email %></p>
+      <% if (user.twitter.id) { %> <!-- checks if user is already authenticated with twitter -->
+        <hr>
+        <p>Twitter id: <%= user.twitter.id %></p>
+        <p>Twitter username: <%= user.twitter.username %></p>
+        <p>Twitter displayname: <%= user.twitter.displayName %></p>
+        <a href="/unlink/twitter" class="btn btn-danger">Unlink</a>
+      <% } else { %>
+        <a href="/connect/twitter" class="btn btn-primary">Link Twitter</a>
+      <% } %>
 
-      <hr>
+      <% if (user.google.id) { %> <!-- checks if user is already authenticated with google -->
+        <hr>
+        <p>Google id: <%= user.google.id %></p>
+        <p>Google email: <%= user.google.email %></p>
+        <p>Google name: <%= user.google.name %></p>
+        <a href="/unlink/google" class="btn btn-danger">Unlink</a>
+      <% } else { %>
+        <a href="/connect/google" class="btn btn-danger">Link Google</a>
+      <% } %> 
 
-      <p>Twitter id: <%= user.twitter.id %></p>
-      <p>Twitter username: <%= user.twitter.username %></p>
-      <p>Twitter displayname: <%= user.twitter.displayName %></p>
-        
-      <hr>
-
-      <p>Google id: <%= user.google.id %></p>
-      <p>Google email: <%= user.google.email %></p>
-      <p>Google name: <%= user.google.name %></p>
-
-      <hr>
-
-      <p>Instagram id: <%= user.instagram.id %></p>
-      <p>Instagram username: <%= user.instagram.username %></p>
-      <p>Instagram name: <%= user.instagram.displayName %></p>
+      <% if (user.instagram.id) { %> <!-- checks if user is already authenticated with instagram -->
+        <hr>
+        <p>Instagram id: <%= user.instagram.id %></p>
+        <p>Instagram username: <%= user.instagram.username %></p>
+        <p>Instagram name: <%= user.instagram.displayName %></p>
+        <a href="/unlink/instagram" class="btn btn-danger">Unlink</a>
+      <% } else { %>
+        <a href="/connect/instagram" class="btn btn-warning">Link Instagram</a>
+      <% } % >
 
     </div> <!-- container -->
   </body>
