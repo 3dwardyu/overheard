@@ -13,7 +13,7 @@
         <a href="/logout" class="btn btn-default">Logout</a>
 
       </div> <!-- jumbotron -->
-      <% if (user.local.email) { %>}
+      <% if (user.local.email) { %>
         <p>id: <%= user.id %></p>
         <p>email: <%= user.local.email %></p>
       <% } else { %>
@@ -27,7 +27,7 @@
         <p>Twitter displayname: <%= user.twitter.displayName %></p>
         <a href="/unlink/twitter" class="btn btn-danger">Unlink</a>
       <% } else { %>
-        <a href="/connect/twitter" class="btn btn-primary">Link Twitter</a>
+        <a href="/auth/twitter" class="btn btn-primary">Link Twitter</a>
       <% } %>
 
       <% if (user.google.id) { %> <!-- checks if user is already authenticated with google -->
@@ -37,7 +37,7 @@
         <p>Google name: <%= user.google.name %></p>
         <a href="/unlink/google" class="btn btn-danger">Unlink</a>
       <% } else { %>
-        <a href="/connect/google" class="btn btn-danger">Link Google</a>
+        <a href="/auth/google" class="btn btn-danger">Link Google</a>
       <% } %> 
 
       <% if (user.instagram.id) { %> <!-- checks if user is already authenticated with instagram -->
@@ -47,8 +47,8 @@
         <p>Instagram name: <%= user.instagram.displayName %></p>
         <a href="/unlink/instagram" class="btn btn-danger">Unlink</a>
       <% } else { %>
-        <a href="/connect/instagram" class="btn btn-warning">Link Instagram</a>
-      <% } % >
+        <a href="/auth/instagram" class="btn btn-warning">Link Instagram</a>
+      <% } %>
 
     </div> <!-- container -->
   </body>

@@ -198,8 +198,8 @@ module.exports = function(passport){
                 //update current user with google credentials
                 user.google.id = profile.id;
                 user.google.token = token;
-                user.google.username = profile.displayName;
-                user.google.displayName = profile.emails[0].value;
+                user.google.name = profile.displayName;
+                user.google.email= profile.emails[0].value;
 
                 // save the user
                 user.save(function(err){
